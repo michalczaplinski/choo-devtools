@@ -9,6 +9,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "choo": "^3.3.0",
     "chrome-storage-promise": "^0.1.0"
   }
 }
