@@ -2,8 +2,9 @@
   "name": "choo-devtools",
   "version": "0.0.1",
   "description": "Devtool for the Choo framework",
-  "main": "content.js",
+  "main": "index.js",
   "scripts": {
+    "start": "webpack --watch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -11,5 +12,8 @@
   "dependencies": {
     "choo": "^3.3.0",
     "chrome-storage-promise": "^0.1.0"
+  },
+  "devDependencies": {
+    "webpack": "^1.13.3"
   }
 }
