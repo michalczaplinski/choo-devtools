@@ -2,15 +2,21 @@ const choo = require('choo')
 
 function devtools(app) {
 
-  app.use({
-    onAction: (data, state, name, caller, createSend) => {
-      var ev = new CustomEvent(
-        "__CHOO_DEVTOOLS__",
-        {detail: "hello from choo"}
-      );
-      window.dispatchEvent(ev);
+  function onAction(data, state, name, caller, createSend) {
+    const detail = {
+      data,
+      state,
+      name,
+      caller
     }
+    const ev = new CustomEvent("__CHOO_DEVTOOLS__", { detail })
+    window.dispatchEvent(ev);
+  }
+
+  app.use({
+    onAction: onAction
   })
+
   return app
 }
 
