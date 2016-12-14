@@ -12,18 +12,12 @@ backgroundPageConnection.postMessage({
   tabId: chrome.devtools.inspectedWindow.tabId
 })
 
-// backgroundPageConnection.onMessage.addListener((msg, sender) => {
-//   send('app:update', msg, (err) => {
-//     if (err) return done(err)
-//   })
-// })
-
-
 app.model({
   namespace: 'app',
   state: {
     stateHistory: [],
     currentState: "not updated yet",
+    newData: {} ,
   },
   subscriptions: [
     (send, done) => {
@@ -34,14 +28,12 @@ app.model({
       })
     }
   ],
-  // effects: {
-  //   update: (data, state) => console.log(data)
-  // }
   reducers: {
-    update: (data, state) => {
+    update: (details, state) => {
       return {
-        stateHistory: state.stateHistory.concat(data.state),
-        currentState: data.state,
+        stateHistory: state.stateHistory.concat(details.state),
+        currentState: details.state,
+        newData: details,
       }
     }
   }
@@ -49,10 +41,16 @@ app.model({
 
 const view = (state, prev, send) => html`
   <main>
-    <h1>Current: ${JSON.stringify(state.app.currentState)}</h1>
+    <h2>Previous state:
+      <pre>${JSON.stringify(state.app.currentState, null, 2)}</pre>
+    </h2>
+    <h2>
+      New data:
+      <pre>${JSON.stringify(state.app.newData, null, 2)}</pre>
+    </h2>
     <h2>
       State history:
-      ${state.app.stateHistory.map(item => itemView(item))}
+      <pre>${state.app.stateHistory.map(item => itemView(item))}</pre>
     </h2>
   </main>`
 
