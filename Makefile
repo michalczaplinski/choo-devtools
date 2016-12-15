@@ -1,10 +1,10 @@
 all: build
 
 build:
-	cp -r scripts/* dist/scripts
-	cp html/* dist/html
-	cp manifest.json dist/manifest.json
-	mkdir -p extension_build
-	crx pack dist --zip-output extension_build/choo-devtools.zip
-	mv choo-devtools.crx extension_build
-	mv dist/key.pem extension_build/key.pem
+	mkdir -p extension_build/dist
+	cp dist/bundle.js extension_build/dist/bundle.js
+	cp -r scripts/* extension_build/scripts
+	cp html/* extension_build/html
+	cp manifest.json extension_build/manifest.json
+	crx pack extension_build --zip-output extension_build/choo-devtools.zip
+	rm choo-devtools.crx
