@@ -64,3 +64,5 @@ app.router((route) => [
 
 const tree = app.start()
 document.body.appendChild(tree)
+
+module.exports = app;

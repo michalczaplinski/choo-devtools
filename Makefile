@@ -7,3 +7,4 @@ build:
 	mkdir -p extension_build
 	crx pack dist --zip-output extension_build/choo-devtools.zip
 	mv choo-devtools.crx extension_build
+	mv dist/key.pem extension_build/key.pem
