@@ -1,5 +1,6 @@
 .DS_Store
 extension_build
+dist
 
 # Logs
 logs
