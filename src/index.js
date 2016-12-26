@@ -1,5 +1,6 @@
 const choo = require('choo')
 const html = require('choo/html')
+const hash = require('object-hash');
 
 const app = choo()
 
@@ -15,25 +16,43 @@ backgroundPageConnection.postMessage({
 app.model({
   namespace: 'app',
   state: {
-    stateHistory: [],
-    currentState: "not updated yet",
-    newData: {} ,
+    actions: [],
+    ui: {}
   },
   subscriptions: [
     (send, done) => {
       backgroundPageConnection.onMessage.addListener((msg, sender) => {
-        send('app:update', msg, (err) => {
-          if (err) return done(err)
-        })
+        if (msg.type == 'ACTION') {
+          send('app:addAction', msg, (err) => {
+            if (err) return done(err)
+          })
+        } else if (msg.type == 'STATE_CHANGE') {
+          send('app:stateChange', msg, (err) => {
+            if (err) return done(err)
+          })
+        } else {
+          throw new Error(`The message type is not known: ${msg.type}`)
+        }
       })
     }
   ],
   reducers: {
-    update: (details, state) => {
+    addAction: (action, state) => {
       return {
-        stateHistory: state.stateHistory.concat(details.state),
-        currentState: details.state,
-        newData: details,
+        actions: state.actions.concat(action),
+      }
+    },
+    stateChange: (action, state) => {
+      return {
+        actions: state.actions.map((value) => {
+          if (value.newState === undefined
+            && value.name === action.caller
+            && value.data
+            && value.data.payload === action.data.payload) {
+              value.newState = action.state
+          }
+          return value
+        }),
       }
     }
   }
@@ -41,21 +60,21 @@ app.model({
 
 const view = (state, prev, send) => html`
   <main>
-    <h2>Previous state:
-      <pre>${JSON.stringify(state.app.currentState, null, 2)}</pre>
-    </h2>
-    <h2>
-      New data:
-      <pre>${JSON.stringify(state.app.newData, null, 2)}</pre>
-    </h2>
-    <h2>
-      State history:
-      <pre>${state.app.stateHistory.map(item => itemView(item))}</pre>
-    </h2>
+    <div>State:
+      <pre>${JSON.stringify(state.app.actions.slice(-1)[0], null, 2)}</pre>
+    </div>
+    <div>
+      Actions:
+      <div>${state.app.actions.map(item => itemView(item))}</div>
+    </div>
   </main>`
 
 const itemView = (item) => html`
-  <div>${JSON.stringify(item)}</div>`
+  <div>
+    <pre>${JSON.stringify(item.state)}</pre>
+    <pre>${item.newState ? JSON.stringify(item.newState) : 'no difference'}</pre>
+  </div>
+  `
 
 
 app.router((route) => [

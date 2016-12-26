@@ -11,7 +11,8 @@
   "license": "MIT",
   "dependencies": {
     "choo": "^3.3.0",
-    "chrome-storage-promise": "^0.1.0"
+    "chrome-storage-promise": "^0.1.0",
+    "jsondiffpatch": "^0.2.4"
   },
   "devDependencies": {
     "webpack": "^1.13.3"
