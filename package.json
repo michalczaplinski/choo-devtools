@@ -12,7 +12,10 @@
   "dependencies": {
     "choo": "^3.3.0",
     "chrome-storage-promise": "^0.1.0",
-    "jsondiffpatch": "^0.2.4"
+    "css-loader": "^0.26.1",
+    "jsondiffpatch": "^0.2.4",
+    "lodash": "^4.17.4",
+    "style-loader": "^0.13.1"
   },
   "devDependencies": {
     "webpack": "^1.13.3"

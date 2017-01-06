@@ -1,6 +1,6 @@
 const choo = require('choo')
 const html = require('choo/html')
-const hash = require('object-hash');
+const _ = require('lodash');
 
 const app = choo()
 
@@ -46,10 +46,14 @@ app.model({
       return {
         actions: state.actions.map((value) => {
           if (value.newState === undefined
-            && value.name === action.caller
-            && value.data
-            && value.data.payload === action.data.payload) {
-              value.newState = action.state
+              && value.name === action.caller
+              && value.data
+              //FIXME: might have to updated that to take into acount comparing objects.
+              && value.data.payload === action.data.payload
+            ) {
+            value.newState = action.state;
+          } else {
+            value.newState = value.state;
           }
           return value
         }),
@@ -58,21 +62,28 @@ app.model({
   }
 })
 
-const view = (state, prev, send) => html`
-  <main>
-    <div>State:
-      <pre>${JSON.stringify(state.app.actions.slice(-1)[0], null, 2)}</pre>
+const view = (state, prev, send) => {
+  const action = state.app.actions.slice(-1)[0] || {}
+  const newState = action.newState || {}
+
+  return html`
+  <main class="main">
+    <div class="actions-box">Actions:
+      <div>${state.app.actions.map(item => actionView(item))}</div>
     </div>
-    <div>
-      Actions:
-      <div>${state.app.actions.map(item => itemView(item))}</div>
+    <div class="divider-line"></div>
+    <div class="content-box">
+      State:
+      <pre>${JSON.stringify(newState, null, 2)}</pre>
     </div>
   </main>`
+}
 
-const itemView = (item) => html`
-  <div>
-    <pre>${JSON.stringify(item.state)}</pre>
-    <pre>${item.newState ? JSON.stringify(item.newState) : 'no difference'}</pre>
+const actionView = item => html`
+  <div class="actions-box-item">
+    <span>${item.name}</span>
+    <span>${item.caller}</span>
+    <span>${(item.data && item.data.payload) ? item.data.payload : ''}</span>
   </div>
   `
 
