@@ -103,19 +103,27 @@
 	          }
 	          return value
 	        }),
+	        ui: {
+	          currentAction: state.actions.length - 1,
+	        },
+	      }
+	    },
+	    showAction: (action, state) => {
+	      return {
+	        ui: { currentAction: action.currentAction }
 	      }
 	    }
 	  }
 	})
 
 	const view = (state, prev, send) => {
-	  const action = state.app.actions.slice(-1)[0] || {}
+	  const action = state.app.actions[state.app.ui.currentAction] || {}
 	  const newState = action.newState || {}
 
 	  return html`
 	  <main class="main">
 	    <div class="actions-box">Actions:
-	      <div>${state.app.actions.map(item => actionView(item))}</div>
+	      <div>${state.app.actions.map(item => actionView(state, item, send))}</div>
 	    </div>
 	    <div class="divider-line"></div>
 	    <div class="content-box">
@@ -125,14 +133,22 @@
 	  </main>`
 	}
 
-	const actionView = item => html`
-	  <div class="actions-box-item">
-	    <span>${item.name}</span>
-	    <span>${item.caller}</span>
-	    <span>${(item.data && item.data.payload) ? item.data.payload : ''}</span>
-	  </div>
-	  `
+	const actionView = (state, item, send) => {
 
+	  function showActionDetail(e) {
+	    const currentAction = state.app.actions.indexOf(item);
+	    console.log(currentAction);
+	    send('app:showAction', { currentAction });
+	  }
+
+	  return html`
+	    <div class="actions-box-item" onclick=${showActionDetail}>
+	      <span>${item.name}</span>
+	      <span>${item.caller}</span>
+	      <span>${(item.data && item.data.payload) ? item.data.payload : ''}</span>
+	    </div>
+	    `
+	}
 
 	app.router((route) => [
 	  route('/', view)
